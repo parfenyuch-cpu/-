@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГРАДИЕНТ — Благоустройство территорий в Сыктывкаре и Республике Коми</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --moss: #3a5a40;
+            --honey: #588157;
+            --fern: #a3b18a;
+            --sage: #dad7cd;
+            --sand: #f5f0e8;
+            --stone: #6b705c;
+            --graphite: #2d3436;
+            --bark: #4a3728;
+            --sky: #4a6fa5;
+            --frost: #7db9de;
+            --berry: #c0392b;
+            --lingonberry: #b03a2e;
+            --moss-dark: #1e3a2f;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', Arial, sans-serif; color: var(--graphite); overflow-x: hidden; background: var(--sand); }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Animated background gradient */
+        .bg-gradient {
+            background: linear-gradient(-45deg, var(--moss-dark), var(--moss), var(--sky), var(--stone));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+        .particle {
+            position: absolute; border-radius: 50%; opacity: 0.15;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+
+        /* Top Bar */
+        .top-bar { background: var(--moss-dark); color: var(--sage); padding: 8px 0; font-size: 13px; position: fixed; top: 0; left: 0; right: 0; z-index: 1001; backdrop-filter: blur(10px); }
+        .top-bar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .top-bar-left { display: flex; align-items: center; gap: 25px; }
+        .top-bar-left span { display: flex; align-items: center; gap: 6px; opacity: 0.9; }
+        .top-bar-nav { display: flex; gap: 0; align-items: center; }
+        .top-bar-nav a { color: #fff; padding: 5px 14px; font-size: 12px; font-weight: 600; transition: all 0.3s; border-radius: 4px; position: relative; }
+        .top-bar-nav a:hover { color: var(--frost); }
+        .top-bar-dropdown { position: relative; }
+        .top-bar-dropdown > a { cursor: pointer; }
+        .top-bar-dropdown ul { display: none; position: absolute; top: 100%; left: 0; background: var(--graphite); min-width: 260px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.4); border-radius: 0 0 12px 12px; padding: 8px 0; }
+        .top-bar-dropdown:hover ul { display: block; animation: dropIn 0.3s ease; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .top-bar-dropdown ul li a { padding: 14px 22px; font-size: 13px; border-bottom: 1px solid #3a3a3a; display: block; border-radius: 0; }
+        .top-bar-dropdown ul li:last-child a { border-bottom: none; }
+        .top-bar-dropdown ul li a:hover { background: #3a3a3a; color: var(--fern); padding-left: 28px; }
+
+        /* Header */
+        .header { background: rgba(255,255,255,0.97); padding: 12px 0; position: fixed; top: 36px; left: 0; right: 0; z-index: 1000; backdrop-filter: blur(15px); box-shadow: 0 2px 20px rgba(0,0,0,0.06); transition: all 0.3s; }
+        .header.scrolled { padding: 8px 0; box-shadow: 0 4px 30px rgba(0,0,0,0.1); }
+        .header .container { display: flex; justify-content: space-between; align-items: center; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--moss), var(--honey)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 900; box-shadow: 0 4px 15px rgba(58,90,64,0.3); transition: transform 0.3s; }
+        .logo-icon:hover { transform: rotate(5deg) scale(1.05); }
+        .logo-text h1 { font-size: 20px; color: var(--graphite); font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; }
+        .logo-text .subtitle { font-size: 10px; color: var(--stone); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .header-right { display: flex; align-items: center; gap: 25px; }
+        .header-phone { text-align: right; }
+        .header-phone a { font-size: 18px; font-weight: 800; color: var(--graphite); transition: color 0.3s; }
+        .header-phone a:hover { color: var(--moss); }
+        .header-phone p { font-size: 11px; color: #999; margin-top: 2px; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: none; text-align: center; text-transform: uppercase; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; position: relative; overflow: hidden; }
+        .btn::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .btn:hover::before { opacity: 1; }
+        .btn:hover { transform: translateY(-3px); }
+        .btn-green { background: linear-gradient(135deg, var(--moss), var(--honey)); color: #fff; box-shadow: 0 6px 25px rgba(58,90,64,0.4); }
+        .btn-green::before { background: linear-gradient(135deg, var(--honey), var(--fern)); }
+        .btn-green:hover { box-shadow: 0 12px 35px rgba(58,90,64,0.5), 0 0 20px rgba(163,177,138,0.3); }
+        .btn-berry { background: linear-gradient(135deg, var(--berry), var(--lingonberry)); color: #fff; box-shadow: 0 6px 25px rgba(192,57,43,0.4); }
+        .btn-berry::before { background: linear-gradient(135deg, var(--lingonberry), #d35400); }
+        .btn-berry:hover { box-shadow: 0 12px 35px rgba(192,57,43,0.5), 0 0 20px rgba(192,57,43,0.3); }
+        .btn-outline { background: transparent; border: 2px solid rgba(255,255,255,0.5); color: #fff; }
+        .btn-outline:hover { background: #fff; color: var(--graphite); border-color: #fff; box-shadow: 0 8px 30px rgba(255,255,255,0.2); }
+        .btn-large { padding: 16px 40px; font-size: 14px; }
+
+        /* Hero */
+        .hero { min-height: 100vh; position: relative; display: flex; align-items: center; padding: 120px 0 80px; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: rgba(15,25,20,0.55); z-index: 2; }
+        .hero .container { position: relative; z-index: 3; display: grid; grid-template-columns: 1fr 420px; gap: 60px; align-items: center; width: 100%; }
+        .hero-text { color: #fff; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); padding: 8px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.15); }
+        .hero-badge-dot { width: 8px; height: 8px; background: var(--honey); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
+        .hero h2 { font-size: 52px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 4px 20px rgba(0,0,0,0.3); }
+        .hero h2 span { background: linear-gradient(135deg, var(--frost), var(--fern)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-desc { font-size: 18px; line-height: 1.7; margin-bottom: 35px; opacity: 0.92; font-weight: 400; }
+        .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        .hero-stats { display: flex; gap: 35px; margin-top: 45px; padding-top: 35px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-size: 36px; font-weight: 900; color: var(--frost); }
+        .hero-stat-text { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; margin-top: 5px; }
+
+        /* Hero Form */
+        .hero-form { background: rgba(255,255,255,0.97); border-radius: 20px; padding: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .hero-form-title { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 6px; color: var(--graphite); }
+        .hero-form-sub { font-size: 13px; text-align: center; color: #888; margin-bottom: 25px; }
+        .hero-form .form-group { margin-bottom: 14px; }
+        .hero-form .form-group input { width: 100%; padding: 14px 18px; border: 2px solid #e8e8e8; border-radius: 10px; font-size: 15px; transition: all 0.3s; font-family: 'Montserrat', sans-serif; background: #fafafa; }
+        .hero-form .form-group input:focus { outline: none; border-color: var(--honey); background: #fff; box-shadow: 0 0 0 4px rgba(88,129,87,0.1); }
+        .hero-form .btn { width: 100%; }
+        .hero-form-note { font-size: 10px; color: #aaa; text-align: center; margin-top: 12px; line-height: 1.5; }
+        .hero-form-note a { color: var(--moss); text-decoration: underline; }
+
+        /* Section Styles */
+        section { padding: 90px 0; position: relative; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 42px; font-weight: 900; color: var(--graphite); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .section-header h2 span { background: linear-gradient(135deg, var(--moss), var(--honey)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-header p { font-size: 17px; color: var(--stone); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+        .section-line { width: 60px; height: 4px; background: linear-gradient(90deg, var(--moss), var(--fern)); border-radius: 2px; margin: 20px auto 0; }
+
+        /* Services */
+        .services { background: var(--sand); }
+        .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        .service-card { position: relative; border-radius: 20px; overflow: hidden; cursor: pointer; height: 340px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .service-card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        .service-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .service-card:hover .service-card-bg { transform: scale(1.12); }
+        .service-card-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15,25,20,0.85) 0%, rgba(15,25,20,0.2) 60%, transparent 100%); transition: all 0.4s; }
+        .service-card:hover .service-card-overlay { background: linear-gradient(0deg, rgba(58,90,64,0.9) 0%, rgba(58,90,64,0.4) 60%, transparent 100%); }
+        .service-card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; z-index: 2; }
+        .service-card h3 { color: #fff; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; text-shadow: 1px 2px 10px rgba(0,0,0,0.3); }
+        .service-card p { color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.5; transform: translateY(20px); opacity: 0; transition: all 0.4s 0.1s; }
+        .service-card:hover p { transform: translateY(0); opacity: 1; }
+        .service-card-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; transition: all 0.4s; font-size: 20px; }
+        .service-card:hover .service-card-icon { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+
+        /* Advantages */
+        .advantages { background: var(--graphite); color: #fff; overflow: hidden; }
+        .advantages::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(58,90,64,0.3), transparent 70%); }
+        .advantages .container { position: relative; z-index: 2; }
+        .advantages-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .advantage-card { text-align: center; padding: 40px 25px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); transition: all 0.4s; position: relative; overflow: hidden; }
+        .advantage-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(163,177,138,0.08), transparent 60%); opacity: 0; transition: opacity 0.4s; }
+        .advantage-card:hover::before { opacity: 1; }
+        .advantage-card:hover { transform: translateY(-8px); border-color: rgba(163,177,138,0.3); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        .advantage-icon { width: 70px; height: 70px; background: linear-gradient(135deg, var(--moss), var(--honey)); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; transition: all 0.4s; box-shadow: 0 8px 25px rgba(58,90,64,0.3); }
+        .advantage-card:hover .advantage-icon { transform: scale(1.1) rotate(5deg); box-shadow: 0 12px 35px rgba(58,90,64,0.5); }
+        .advantage-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .advantage-card p { font-size: 13px; opacity: 0.6; line-height: 1.6; }
+
+        /* Calculator */
+        .calculator-section { background: linear-gradient(135deg, var(--sand) 0%, #ebe5d9 100%); }
+        .calculator-section .container { display: grid; grid-template-columns: 1fr 420px; gap: 60px; align-items: center; }
+        .calc-text h2 { font-size: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .calc-text h2 span { background: linear-gradient(135deg, var(--moss), var(--honey)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .calc-text p { font-size: 16px; color: var(--stone); line-height: 1.7; margin-bottom: 25px; }
+        .calc-features { list-style: none; }
+        .calc-features li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 15px; font-weight: 500; }
+        .calc-features li::before { content: '✓'; display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: linear-gradient(135deg, var(--moss), var(--honey)); color: #fff; border-radius: 50%; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+        .calc-card { background: #fff; border-radius: 24px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); }
+        .calc-row { text-align: left; margin-bottom: 22px; }
+        .calc-row label { display: block; font-size: 13px; font-weight: 700; color: var(--graphite); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-row select, .calc-row input { width: 100%; padding: 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 16px; font-family: 'Montserrat', sans-serif; transition: all 0.3s; background: #fafafa; }
+        .calc-row select:focus, .calc-row input:focus { outline: none; border-color: var(--honey); background: #fff; box-shadow: 0 0 0 4px rgba(88,129,87,0.1); }
+        .calc-range { position: relative; }
+        .calc-range input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--moss), var(--fern)); outline: none; margin: 10px 0; }
+        .calc-range input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--moss), var(--honey)); cursor: pointer; box-shadow: 0 4px 10px rgba(58,90,64,0.3); }
+        .calc-result { background: linear-gradient(135deg, var(--moss), var(--honey)); border-radius: 16px; padding: 25px; text-align: center; margin-bottom: 22px; color: #fff; position: relative; overflow: hidden; }
+        .calc-result::before { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .calc-result span { font-size: 13px; opacity: 0.9; display: block; margin-bottom: 5px; font-weight: 500; }
+        .calc-price { font-size: 36px; font-weight: 900; }
+        .calc-note { font-size: 11px; color: #aaa; text-align: center; line-height: 1.5; margin-top: 15px; }
+
+        /* Portfolio */
+        .portfolio { background: #fff; }
+        .carousel-wrapper { position: relative; max-width: 950px; margin: 0 auto; }
+        .carousel-track { overflow: hidden; border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.12); background: var(--graphite); }
+        .carousel-slides { display: flex; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .carousel-slide { min-width: 100%; height: 480px; background-size: cover; background-position: center; position: relative; }
+        .carousel-slide-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15,25,20,0.85) 0%, rgba(15,25,20,0.1) 50%); }
+        .carousel-slide-content { position: absolute; bottom: 40px; left: 40px; right: 40px; z-index: 2; color: #fff; text-align: left; }
+        .carousel-slide-content h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; text-shadow: 1px 2px 10px rgba(0,0,0,0.4); }
+        .carousel-slide-content p { font-size: 15px; opacity: 0.9; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); color: var(--graphite); border: none; width: 52px; height: 52px; border-radius: 50%; font-size: 24px; cursor: pointer; transition: all 0.3s; z-index: 10; box-shadow: 0 6px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; }
+        .carousel-btn:hover { background: var(--moss); color: #fff; transform: translateY(-50%) scale(1.1); box-shadow: 0 8px 30px rgba(58,90,64,0.3); }
+        .carousel-prev { left: -26px; }
+        .carousel-next { right: -26px; }
+        .carousel-dots { display: flex; justify-content: center; gap: 10px; margin-top: 25px; }
+        .carousel-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--sage); cursor: pointer; border: none; transition: all 0.3s; padding: 0; }
+        .carousel-dot.active { background: var(--moss); transform: scale(1.3); box-shadow: 0 2px 8px rgba(58,90,64,0.3); }
+
+        /* Steps */
+        .steps { background: linear-gradient(135deg, var(--moss-dark), var(--moss)); color: #fff; position: relative; overflow: hidden; }
+        .steps::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(163,177,138,0.15), transparent 50%); }
+        .steps .container { position: relative; z-index: 2; }
+        .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; position: relative; }
+        .steps-grid::before { content: ''; position: absolute; top: 50px; left: 15%; right: 15%; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); }
+        .step-card { text-align: center; padding: 30px 20px; position: relative; }
+        .step-num { width: 70px; height: 70px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 28px; font-weight: 900; border: 2px solid rgba(255,255,255,0.2); transition: all 0.4s; }
+        .step-card:hover .step-num { background: rgba(255,255,255,0.2); transform: scale(1.1); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+        .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .step-card p { font-size: 13px; opacity: 0.7; line-height: 1.6; }
+
+        /* CTA */
+        .cta { background: linear-gradient(135deg, var(--graphite), #1a1a1a); color: #fff; text-align: center; position: relative; overflow: hidden; }
+        .cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(192,57,43,0.15), transparent 70%); }
+        .cta .container { position: relative; z-index: 2; }
+        .cta h2 { font-size: 44px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+        .cta p { font-size: 18px; opacity: 0.7; margin-bottom: 35px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .cta-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+        /* FAQ */
+        .faq { background: var(--sand); }
+        .faq-list { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: #fff; border-radius: 16px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: all 0.3s; border: 1px solid rgba(0,0,0,0.05); }
+        .faq-item:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .faq-question { padding: 22px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+        .faq-question:hover { color: var(--moss); }
+        .faq-icon { width: 30px; height: 30px; background: var(--sand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.4s; flex-shrink: 0; }
+        .faq-item.active .faq-icon { background: var(--moss); color: #fff; transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), padding 0.5s; }
+        .faq-answer-inner { padding: 0 30px 22px; font-size: 15px; color: var(--stone); line-height: 1.7; }
+
+        /* Footer */
+        .footer { background: #111; color: #fff; padding: 70px 0 0; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 50px; }
+        .footer-brand h3 { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+        .footer-brand p { font-size: 14px; color: #888; line-height: 1.7; }
+        .footer h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; color: #fff; }
+        .footer ul li { margin-bottom: 12px; }
+        .footer ul li a { font-size: 14px; color: #888; transition: all 0.3s; }
+        .footer ul li a:hover { color: var(--honey); padding-left: 5px; }
+        .footer-bottom { border-top: 1px solid #222; padding: 25px 0; text-align: center; }
+        .footer-bottom p { font-size: 13px; color: #555; }
+
+        /* Scroll animations */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-left { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right { opacity: 0; transform: translateX(50px); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .reveal-scale { opacity: 0; transform: scale(0.9); transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: #fff; border-radius: 24px; padding: 45px; max-width: 480px; width: 100%; position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.3); animation: slideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-close { position: absolute; top: 18px; right: 22px; font-size: 28px; cursor: pointer; color: #999; background: none; border: none; line-height: 1; transition: all 0.3s; }
+        .modal-close:hover { color: var(--berry); transform: rotate(90deg); }
+        .modal h3 { font-size: 24px; font-weight: 800; color: var(--graphite); margin-bottom: 8px; text-align: center; text-transform: uppercase; }
+        .modal > p { text-align: center; color: #888; font-size: 14px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--graphite); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { width: 100%; padding: 16px; border: 2px solid #e8e8e8; border-radius: 12px; font-size: 16px; transition: all 0.3s; font-family: 'Montserrat', sans-serif; }
+        .form-group input:focus { outline: none; border-color: var(--honey); box-shadow: 0 0 0 4px rgba(88,129,87,0.1); }
+        .form-consent { font-size: 11px; color: #aaa; margin-top: 15px; text-align: center; line-height: 1.5; }
+        .form-consent a { color: var(--moss); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero .container { grid-template-columns: 1fr; gap: 40px; }
+            .hero h2 { font-size: 38px; }
+            .hero-form { max-width: 500px; }
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .advantages-grid { grid-template-columns: repeat(2, 1fr); }
+            .calculator-section .container { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-grid::before { display: none; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .header .container { flex-direction: column; gap: 15px; }
+            .header-right { width: 100%; justify-content: center; }
+            .top-bar .container { flex-direction: column; text-align: center; }
+            .top-bar-left { flex-direction: column; }
+            .top-bar-nav { flex-wrap: wrap; justify-content: center; }
+            .hero { padding: 100px 0 60px; }
+            .hero h2 { font-size: 32px; }
+            .hero-stats { gap: 20px; }
+            .hero-stat-num { font-size: 28px; }
+            .services-grid { grid-template-columns: 1fr; }
+            .service-card { height: 280px; }
+            .advantages-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .carousel-slide { height: 320px; }
+            .carousel-btn { width: 42px; height: 42px; font-size: 20px; }
+            .carousel-prev { left: 10px; }
+            .carousel-next { right: 10px; }
+            .section-header h2 { font-size: 30px; }
+            .cta h2 { font-size: 30px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .btn-large { padding: 14px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>📍 г. Сыктывкар</span>
+                <span>🕐 ПН-СБ с 8:00 до 20:00</span>
+                <span>✉ info@gradient11.ru</span>
+            </div>
+            <div class="top-bar-nav">
+                <div class="top-bar-dropdown">
+                    <a href="#services">Услуги ▾</a>
+                    <ul>
+                        <li><a href="#service-1">Заезды на участок</a></li>
+                        <li><a href="#service-2">Площадки и парковки</a></li>
+                        <li><a href="#service-3">Дренаж и ливневые системы</a></li>
+                        <li><a href="#service-4">Благоустройство</a></li>
+                    </ul>
+                </div>
+                <a href="#calculator">Калькулятор</a>
+                <a href="#portfolio">Примеры работ</a>
+                <a href="#faq">Вопросы</a>
+                <a href="#contacts">Контакты</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-left">
+                <div class="logo-icon">Г</div>
+                <div class="logo-text">
+                    <h1>ГРАДИЕНТ</h1>
+                    <div class="subtitle">Благоустройство территории</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-phone">
+                    <a href="tel:+78212000000">+7 (8212) 00-00-00</a>
+                    <p>Сыктывкар и Республика Коми</p>
+                </div>
+                <button class="btn btn-green" onclick="openModal()">Заказать звонок</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero bg-gradient">
+        <div class="particles" id="particles"></div>
+        <div class="container">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <div class="hero-badge-dot"></div>
+                    Работаем по всей Республике Коми
+                </div>
+                <h2>Благоустройство<br>территорий <span>под ключ</span></h2>
+                <p class="hero-desc">Создаём уют и порядок на вашей территории. Заезды, парковки, дренаж и комплексное благоустройство — от проекта до реализации.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-berry btn-large" onclick="openModal()">Заказать расчёт</button>
+                    <a href="#portfolio" class="btn btn-outline btn-large">Смотреть работы</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-num" data-count="150">0</div>
+                        <div class="hero-stat-text">Проектов</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-num" data-count="8">0</div>
+                        <div class="hero-stat-text">Лет опыта</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-num" data-count="98">0</div>
+                        <div class="hero-stat-text">% довольных</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-form">
+                <div class="hero-form-title">Расчёт стоимости</div>
+                <p class="hero-form-sub">Бесплатно за 5 минут</p>
+                <form onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <input type="text" placeholder="Ваше имя" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="+7 (___) ___-__-__" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Опишите задачу (необязательно)">
+                    </div>
+                    <button type="submit" class="btn btn-green btn-large">Получить расчёт</button>
+                    <p class="hero-form-note">Нажимая кнопку, вы соглашаетесь с <a href="#">Положением</a> и даёте <a href="#">Согласие</a> на обработку данных.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Наши <span>услуги</span></h2>
+                <p>Полный спектр работ по благоустройству — от заезда на участок до комплексного преображения территории</p>
+                <div class="section-line"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card reveal" id="service-1" onclick="openModal()" style="transition-delay:0.1s">
+                    <div class="service-card-bg" style="background-image: url('https://m-files.cdn1.cc/lpfile/c/0/6/c0608505882646d8424094a119cea5e8/-/crop/0x44x960x1195/-/resize/305/-/resize/1920/f.jpg?42102111');"></div>
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-card-icon">🚗</div>
+                        <h3>Заезды на участок</h3>
+                        <p>Устройство надёжных заездов с укладкой труб, отсыпкой и укреплением</p>
+                    </div>
+                </div>
+                <div class="service-card reveal" id="service-2" onclick="openModal()" style="transition-delay:0.2s">
+                    <div class="service-card-bg" style="background-image: url('https://m-files.cdn1.cc/lpfile/b/4/1/b41d5d27e3e8d65cc3311593c66bdb06/-/crop/0x35x780x971/-/resize/305/-/resize/1920/f.jpg?97944130');"></div>
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-card-icon">🅿️</div>
+                        <h3>Площадки и парковки</h3>
+                        <p>Укладка плитки, щебёночное основание, разметка</p>
+                    </div>
+                </div>
+                <div class="service-card reveal" id="service-3" onclick="openModal()" style="transition-delay:0.3s">
+                    <div class="service-card-bg" style="background-image: url('https://m-files.cdn1.cc/lpfile/3/7/5/37544a6a34bc9048feba265ef28eb1e4/-/crop/0x154x581x723/-/resize/305/-/resize/1920/f.jpg?56953583');"></div>
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-card-icon">💧</div>
+                        <h3>Дренаж и ливневые системы</h3>
+                        <p>Проектирование и монтаж дренажа для защиты от воды</p>
+                    </div>
+                </div>
+                <div class="service-card reveal" id="service-4" onclick="openModal()" style="transition-delay:0.4s">
+                    <div class="service-card-bg" style="background-image: url('https://m-files.cdn1.cc/lpfile/4/2/b/42bd91efcc1287f99e5402a6d6342f44/-/crop/42x0x938x768/-/resize/330/-/resize/1920/f.jpeg?64528265');"></div>
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-card-icon">🌿</div>
+                        <h3>Благоустройство</h3>
+                        <p>Комплексное преображение территории — дорожки, газоны, озеленение</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages -->
+    <section class="advantages">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2 style="color:#fff">Почему <span style="background:linear-gradient(135deg,var(--frost),var(--fern));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">выбирают нас</span></h2>
+                <p style="color:rgba(255,255,255,0.6)">Работаем на совесть — результат, который видно сразу и через годы</p>
+                <div class="section-line"></div>
+            </div>
+            <div class="advantages-grid">
+                <div class="advantage-card reveal" style="transition-delay:0.1s">
+                    <div class="advantage-icon">📋</div>
+                    <h3>Договор и гарантия</h3>
+                    <p>Работаем официально, гарантия на все виды работ до 3 лет</p>
+                </div>
+                <div class="advantage-card reveal" style="transition-delay:0.2s">
+                    <div class="advantage-icon">🏗️</div>
+                    <h3>Своя техника</h3>
+                    <p>Собственный парк техники — без посредников и наценок</p>
+                </div>
+                <div class="advantage-card reveal" style="transition-delay:0.3s">
+                    <div class="advantage-icon">📐</div>
+                    <h3>Точный расчёт</h3>
+                    <p>Выезд специалиста бесплатно, смета фиксируется в договоре</p>
+                </div>
+                <div class="advantage-card reveal" style="transition-delay:0.4s">
+                    <div class="advantage-icon">⏱️</div>
+                    <h3>Сроки в договоре</h3>
+                    <p>Начинаем вовремя, заканчиваем в срок — или вернём деньги</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <section class="calculator-section" id="calculator">
+        <div class="container">
+            <div class="calc-text reveal-left">
+                <h2>Рассчитайте <span>стоимость</span></h2>
+                <p>Узнайте примерную стоимость работ за пару кликов. Точный расчёт — после бесплатного выезда специалиста на ваш участок.</p>
+                <ul class="calc-features">
+                    <li>Бесплатный выезд и замер</li>
+                    <li>Фиксированная смета в договоре</li>
+                    <li>Скидка до 25% на материалы</li>
+                    <li>Рассрочка без переплат</li>
+                </ul>
+                <button class="btn btn-berry btn-large" onclick="openModal()" style="margin-top:25px;">Получить точный расчёт</button>
+            </div>
+            <div class="calc-card reveal-right">
+                <div class="calc-row">
+                    <label>Тип услуги</label>
+                    <select id="calcService" onchange="calculate()">
+                        <option value="3500">Заезд на участок</option>
+                        <option value="2800">Площадка / парковка</option>
+                        <option value="4200">Дренаж и ливневые системы</option>
+                        <option value="2200">Благоустройство</option>
+                    </select>
+                </div>
+                <div class="calc-row calc-range">
+                    <label>Площадь: <span id="areaValue">50</span> м²</label>
+                    <input type="range" id="calcArea" min="10" max="500" value="50" oninput="calculate()">
+                </div>
+                <div class="calc-result">
+                    <span>Примерная стоимость:</span>
+                    <div class="calc-price" id="calcPrice">175 000 ₽</div>
+                </div>
+                <button class="btn btn-green btn-large" onclick="openModal()" style="width:100%;">Заказать расчёт</button>
+                <p class="calc-note">* Расчёт приблизительный. Точную стоимость уточнит специалист после выезда.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section class="portfolio" id="portfolio">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Примеры <span>работ</span></h2>
+                <p>Каждый проект — это решение конкретных задач участка. Посмотрите, как мы преображаем территории</p>
+                <div class="section-line"></div>
+            </div>
+            <div class="carousel-wrapper reveal-scale">
+                <div class="carousel-track">
+                    <div class="carousel-slides" id="carouselSlides">
+                        <div class="carousel-slide" style="background-image: url('https://m-files.cdn1.cc/lpfile/c/0/6/c0608505882646d8424094a119cea5e8/-/crop/0x44x960x1195/-/resize/305/-/resize/1920/f.jpg?42102111');">
+                            <div class="carousel-slide-overlay"></div>
+                            <div class="carousel-slide-content">
+                                <h3>Заезд на участок — Сыктывкар</h3>
+                                <p>Устройство заезда с укладкой трубы в дренажной канаве</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://m-files.cdn1.cc/lpfile/b/4/1/b41d5d27e3e8d65cc3311593c66bdb06/-/crop/0x35x780x971/-/resize/305/-/resize/1920/f.jpg?97944130');">
+                            <div class="carousel-slide-overlay"></div>
+                            <div class="carousel-slide-content">
+                                <h3>Парковка из плитки — Эжва</h3>
+                                <p>Укладка тротуарной плитки для парковочной площадки</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://m-files.cdn1.cc/lpfile/3/7/5/37544a6a34bc9048feba265ef28eb1e4/-/crop/0x154x581x723/-/resize/305/-/resize/1920/f.jpg?56953583');">
+                            <div class="carousel-slide-overlay"></div>
+                            <div class="carousel-slide-content">
+                                <h3>Дренажная система — Корткерос</h3>
+                                <p>Монтаж глубинного дренажа для отвода грунтовых вод</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide" style="background-image: url('https://m-files.cdn1.cc/lpfile/4/2/b/42bd91efcc1287f99e5402a6d6342f44/-/crop/42x0x938x768/-/resize/330/-/resize/1920/f.jpeg?64528265');">
+                            <div class="carousel-slide-overlay"></div>
+                            <div class="carousel-slide-content">
+                                <h3>Благоустройство — Ухта</h3>
+                                <p>Комплексное благоустройство территории под ключ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)">‹</button>
+                <button class="carousel-btn carousel-next" onclick="moveCarousel(1)">›</button>
+                <div class="carousel-dots" id="carouselDots">
+                    <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+                    <button class="carousel-dot" onclick="goToSlide(1)"></button>
+                    <button class="carousel-dot" onclick="goToSlide(2)"></button>
+                    <button class="carousel-dot" onclick="goToSlide(3)"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="steps">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2 style="color:#fff">Как мы <span style="background:linear-gradient(135deg,var(--frost),var(--fern));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">работаем</span></h2>
+                <p style="color:rgba(255,255,255,0.6)">От заявки до готового результата — 4 простых шага</p>
+                <div class="section-line"></div>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card reveal" style="transition-delay:0.1s">
+                    <div class="step-num">01</div>
+                    <h3>Заявка</h3>
+                    <p>Оставьте заявку на сайте или позвоните. Обсудим задачу и назначим выезд.</p>
+                </div>
+                <div class="step-card reveal" style="transition-delay:0.2s">
+                    <div class="step-num">02</div>
+                    <h3>Выезд и смета</h3>
+                    <p>Специалист приедет на участок, сделает замер и подготовит точную смету.</p>
+                </div>
+                <div class="step-card reveal" style="transition-delay:0.3s">
+                    <div class="step-num">03</div>
+                    <h3>Работы</h3>
+                    <p>Выполняем работы в оговорённые сроки с контролем качества на каждом этапе.</p>
+                </div>
+                <div class="step-card reveal" style="transition-delay:0.4s">
+                    <div class="step-num">04</div>
+                    <h3>Сдача объекта</h3>
+                    <p>Принимаете работу, подписываете акт. Гарантия до 3 лет на все виды работ.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container reveal-scale">
+            <h2>Готовы преобразить<br>свой участок?</h2>
+            <p>Оставьте заявку сейчас и получите бесплатный выезд специалиста + скидку 10% на материалы</p>
+            <div class="cta-buttons">
+                <button class="btn btn-berry btn-large" onclick="openModal()">Заказать расчёт</button>
+                <a href="tel:+78212000000" class="btn btn-outline btn-large">Позвонить</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Частые <span>вопросы</span></h2>
+                <p>Ответы на самые популярные вопросы наших клиентов</p>
+                <div class="section-line"></div>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item reveal" style="transition-delay:0.1s">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Сколько стоит устройство заезда на участок?
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Стоимость зависит от длины заезда, типа грунта, необходимости укладки трубы и материала покрытия. В среднем — от 3 500 ₽/м². Точный расчёт — после бесплатного выезда специалиста.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal" style="transition-delay:0.15s">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        За какой срок вы выполняете работы?
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Небольшие объекты (заезд, площадка) — 1-3 дня. Комплексное благоустройство — от 5 до 14 дней. Сроки фиксируются в договоре.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal" style="transition-delay:0.2s">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Даёте ли вы гарантию на работы?
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Да, гарантия от 1 до 3 лет в зависимости от вида работ. Всё прописано в договоре. Если за гарантийный срок возникнут проблемы — устраним бесплатно.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal" style="transition-delay:0.25s">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Выезд специалиста бесплатный?
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Да, выезд, замер и составление сметы — бесплатно. Специалист приедет в удобное для вас время и подготовит подробный расчёт стоимости.</div>
+                    </div>
+                </div>
+                <div class="faq-item reveal" style="transition-delay:0.3s">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Работаете ли вы за пределами Сыктывкара?
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">Да, мы работаем по всей Республике Коми: Эжва, Корткерос, Ухта, Сосногорск и другие населённые пункты. Стоимость выезда за город уточняйте по телефону.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contacts">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>ГРАДИЕНТ</h3>
+                    <p>Профессиональное благоустройство территорий в Сыктывкаре и Республике Коми. Создаём уют и порядок на вашей земле с 2018 года.</p>
+                </div>
+                <div>
+                    <h4>Услуги</h4>
+                    <ul>
+                        <li><a href="#service-1">Заезды на участок</a></li>
+                        <li><a href="#service-2">Площадки и парковки</a></li>
+                        <li><a href="#service-3">Дренаж и ливневые системы</a></li>
+                        <li><a href="#service-4">Благоустройство</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#portfolio">Примеры работ</a></li>
+                        <li><a href="#calculator">Калькулятор</a></li>
+                        <li><a href="#faq">Частые вопросы</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li><a href="tel:+78212000000">+7 (8212) 00-00-00</a></li>
+                        <li><a href="mailto:info@gradient11.ru">info@gradient11.ru</a></li>
+                        <li><a href="#">г. Сыктывкар</a></li>
+                        <li><a href="#">ПН-СБ с 8:00 до 20:00</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Градиент. Сайт не является публичной офертой.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3>Заказать звонок</h3>
+            <p>Перезвоним в течение 5 минут</p>
+            <form onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label>Ваше имя *</label>
+                    <input type="text" placeholder="Введите ваше имя" required>
+                </div>
+                <div class="form-group">
+                    <label>Телефон *</label>
+                    <input type="tel" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <button type="submit" class="btn btn-green btn-large" style="width:100%;">Отправить</button>
+                <p class="form-consent">Нажимая кнопку, вы соглашаетесь с <a href="#">Положением</a> и даёте <a href="#">Согласие</a> на обработку данных.</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* Particles */
+        (function() {
+            var c = document.getElementById('particles');
+            var colors = ['rgba(163,177,138,0.3)', 'rgba(125,185,222,0.25)', 'rgba(218,215,205,0.2)'];
+            for (var i = 0; i < 20; i++) {
+                var p = document.createElement('div');
+                p.className = 'particle';
+                var size = Math.random() * 8 + 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                c.appendChild(p);
+            }
+        })();
+
+        /* Header scroll */
+        window.addEventListener('scroll', function() {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        /* Scroll reveal */
+        var revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) { e.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.15 });
+        revealEls.forEach(function(el) { revealObserver.observe(el); });
+
+        /* Counter animation */
+        var counters = document.querySelectorAll('.hero-stat-num');
+        var counterObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting && !e.target.dataset.animated) {
+                    e.target.dataset.animated = 'true';
+                    var target = parseInt(e.target.dataset.count);
+                    var step = Math.ceil(target / 60);
+                    var current = 0;
+                    var timer = setInterval(function() {
+                        current += step;
+                        if (current >= target) { current = target; clearInterval(timer); }
+                        e.target.textContent = current + '+';
+                    }, 30);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(function(c) { counterObserver.observe(c); });
+
+        /* Calculator */
+        function calculate() {
+            var price = parseInt(document.getElementById('calcService').value);
+            var area = parseInt(document.getElementById('calcArea').value) || 0;
+            document.getElementById('areaValue').textContent = area;
+            var total = price * area;
+            document.getElementById('calcPrice').textContent = total.toLocaleString('ru-RU') + ' ₽';
+        }
+
+        /* Carousel */
+        var currentSlide = 0;
+        var totalSlides = 4;
+        function updateCarousel() {
+            document.getElementById('carouselSlides').style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+            document.querySelectorAll('.carousel-dot').forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
+        }
+        function moveCarousel(dir) { currentSlide = (currentSlide + dir + totalSlides) % totalSlides; updateCarousel(); }
+        function goToSlide(i) { currentSlide = i; updateCarousel(); }
+        setInterval(function() { moveCarousel(1); }, 5000);
+
+        /* FAQ */
+        function toggleFaq(el) {
+            var item = el.parentElement;
+            var answer = item.querySelector('.faq-answer');
+            var isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item.active').forEach(function(active) {
+                active.classList.remove('active');
+                active.querySelector('.faq-answer').style.maxHeight = '0';
+            });
+            if (!isActive) {
+                item.classList.add('active');
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+        }
+
+        /* Modal */
+        function openModal() { document.getElementById('modal').classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); document.body.style.overflow = ''; }
+        document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+        /* Form */
+        function submitForm(e) { e.preventDefault(); alert('Спасибо! Мы свяжемся с вами в ближайшее время.'); closeModal(); e.target.reset(); }
+    </script>
+</body>
+</html>
